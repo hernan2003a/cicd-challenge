@@ -513,3 +513,4 @@ Se puede implementa un registry externo como amazon ECR.
 
 Se puede implementa un loopback en caso de error de codigo se puede delegar un agente de IA para que lo resuelve lo comitee de forma automatica para reducir el dolor de cabeza de los dessarrolladores. 
 
+Quedo pendiente la promocion de codigo entre branches.
