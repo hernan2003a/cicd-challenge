@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-cicd-challenge-bootstrap
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/hernan2003a/dev-cicd-challenge.git
+    targetRevision: main
+    path: k8s/bootstrap
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-cicd-challenge-stage
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/hernan2003a/dev-cicd-challenge.git
+    targetRevision: stage
+    path: k8s/stage
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-cicd-challenge-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/hernan2003a/dev-cicd-challenge.git
+    targetRevision: prod
+    path: k8s/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

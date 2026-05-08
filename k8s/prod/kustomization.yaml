@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Production environment manifests.
+# ArgoCD syncs this path from the `prod` branch.
+# The `create_prod_promotion_mr` CI job opens an MR updating rollout.yaml onto this branch.
+resources:
+  - rollout.yaml

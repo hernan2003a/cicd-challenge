@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ClusterAnalysisTemplate
+metadata:
+  name: cicd-challenge-health-check
+spec:
+  args:
+    - name: service-url
+  metrics:
+    - name: health-endpoint
+      count: 3
+      interval: 10s
+      failureLimit: 1
+      successCondition: result == 'ok'
+      failureCondition: result != 'ok'
+      provider:
+        web:
+          url: "{{ args.service-url }}"
+          timeoutSeconds: 5
+          jsonPath: "{$.status}"

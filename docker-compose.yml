@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: dev-cicd-challenge:latest
+    ports:
+      - "3001:3001"
+    environment:
+      - APP_ENV=production
+      - APP_VERSION=local-compose
+      - PORT=3001
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: always

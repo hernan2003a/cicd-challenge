@@ -1,0 +1,20 @@
+FAIL __tests__/app.test.js
+  GET /health
+    ✕ should return 200 and status ok (24 ms)
+
+  ● GET /health › should return 200 and status ok
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      6 |     const response = await request(app).get('/health');
+      7 |
+    > 8 |     expect(response.statusCode).toBe(200);
+        |                                 ^
+      9 |     expect(response.body.status).toBe('ok');
+     10 |   });
+     11 | });
+
+Jest: Test suite failed, 1 total

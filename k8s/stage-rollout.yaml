@@ -1,0 +1,92 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: challenge-app
+  namespace: stage
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: challenge-app
+  template:
+    metadata:
+      labels:
+        app: challenge-app
+    spec:
+      containers:
+      - name: app
+        image: registry.infra-tools.svc.cluster.local:5000/cicd-challenge:927c30596770d1b4f8f71a814ac6556365d8f210
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+        env:
+        - name: APP_ENV
+          value: "staging"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+  strategy:
+    blueGreen:
+      activeService: cicd-challenge
+      previewService: cicd-challenge-preview
+      prePromotionAnalysis:
+        templates:
+          - templateName: cicd-challenge-health-check
+            clusterScope: true
+        args:
+          - name: service-url
+            value: http://cicd-challenge-preview.stage.svc.cluster.local:8080/health
+      postPromotionAnalysis:
+        templates:
+          - templateName: cicd-challenge-health-check
+            clusterScope: true
+        args:
+          - name: service-url
+            value: http://cicd-challenge.stage.svc.cluster.local:8081/health
+      autoPromotionEnabled: true
+      scaleDownDelaySeconds: 60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cicd-challenge
+  namespace: stage
+spec:
+  selector:
+    app: challenge-app
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 3001
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cicd-challenge-preview
+  namespace: stage
+spec:
+  selector:
+    app: challenge-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 3001
+  type: ClusterIP

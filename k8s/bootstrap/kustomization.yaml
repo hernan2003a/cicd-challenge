@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Resources shared across all environments.
+# This path is synced by ArgoCD from the main branch.
+resources:
+  - namespaces.yaml
+  - analysis-templates.yaml
